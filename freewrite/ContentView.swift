@@ -404,34 +404,21 @@ struct ContentView: View {
                         }
                     }
                 ))
-                    .background(Color(colorScheme == .light ? .white : .black))
-                    .font(.custom(selectedFont, size: fontSize))
-                    .foregroundColor(colorScheme == .light ? Color(red: 0.20, green: 0.20, blue: 0.20) : Color(red: 0.9, green: 0.9, blue: 0.9))
-                    .scrollContentBackground(.hidden)
-                    .scrollIndicators(.never)
-                    .lineSpacing(lineHeight)
-                    .frame(maxWidth: 650)
-                    .id("\(selectedFont)-\(fontSize)-\(colorScheme)")
-                    .padding(.bottom, bottomNavOpacity > 0 ? navHeight : 0)
-                    .ignoresSafeArea()
-                    .colorScheme(colorScheme)
-                    .onAppear {
-                        placeholderText = placeholderOptions.randomElement() ?? "\n\nBegin writing"
-                        // Removed findSubview code which was causing errors
-                    }
-                    .overlay(
-                        ZStack(alignment: .topLeading) {
-                            if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                Text(placeholderText)
-                                    .font(.custom(selectedFont, size: fontSize))
-                                    .foregroundColor(colorScheme == .light ? .gray.opacity(0.5) : .gray.opacity(0.6))
-                                    // .padding(.top, 8)
-                                    // .padding(.leading, 8)
-                                    .allowsHitTesting(false)
-                                    .offset(x: 5, y: placeholderOffset)
-                            }
-                        }, alignment: .topLeading
-                    )
+                .background(Color(colorScheme == .light ? .white : .black))
+                .font(.custom(selectedFont, size: fontSize))
+                .foregroundColor(colorScheme == .light ? Color(red: 0.20, green: 0.20, blue: 0.20) : Color(red: 0.9, green: 0.9, blue: 0.9))
+                .scrollContentBackground(.hidden)
+                .scrollIndicators(.never)
+                .lineSpacing(lineHeight)
+                .frame(maxWidth: 650)
+                .id("\(selectedFont)-\(fontSize)-\(colorScheme)")
+                .padding(.bottom, bottomNavOpacity > 0 ? navHeight : 0)
+                .ignoresSafeArea()
+                .colorScheme(colorScheme)
+                .overlay(
+                    LatexText(text: text, colorScheme: colorScheme)
+                        .allowsHitTesting(false)
+                )
                 
                 VStack {
                     Spacer()

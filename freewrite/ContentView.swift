@@ -84,6 +84,8 @@ struct ContentView: View {
     @State private var isHoveringHistoryArrow = false
     @State private var colorScheme: ColorScheme = .light // Add state for color scheme
     @State private var isHoveringThemeToggle = false // Add state for theme toggle hover
+    @State private var wordCount: Int = 0
+    @State private var readingTime: Int = 0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let entryHeight: CGFloat = 40
     
@@ -381,6 +383,17 @@ struct ContentView: View {
         return colorScheme == .light ? Color.primary : Color.white
     }
     
+    // Add computed property for reading time
+    var readingTimeString: String {
+        if readingTime < 1 {
+            return "less than 1 min"
+        } else if readingTime == 1 {
+            return "1 min"
+        } else {
+            return "\(readingTime) mins"
+        }
+    }
+    
     var body: some View {
         let buttonBackground = colorScheme == .light ? Color.white : Color.black
         let navHeight: CGFloat = 68
@@ -416,7 +429,7 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 .colorScheme(colorScheme)
                 .overlay(
-                    LatexText(text: text, colorScheme: colorScheme)
+                    MarkdownText(text: text, colorScheme: colorScheme)
                         .allowsHitTesting(false)
                 )
                 
@@ -751,6 +764,13 @@ struct ContentView: View {
                                     NSCursor.pop()
                                 }
                             }
+
+                            Text("•")
+                                .foregroundColor(.gray)
+                            
+                            Text("\(wordCount) words • \(readingTimeString)")
+                                .font(.system(size: 13))
+                                .foregroundColor(textColor)
                         }
                         .padding(8)
                         .cornerRadius(6)
@@ -937,6 +957,7 @@ struct ContentView: View {
                let currentEntry = entries.first(where: { $0.id == currentId }) {
                 saveEntry(entry: currentEntry)
             }
+            updateWordCountAndReadingTime()
         }
         .onReceive(timer) { _ in
             if timerIsRunning && timeRemaining > 0 {
@@ -1252,6 +1273,16 @@ struct ContentView: View {
         pdfContext.closePDF()
         
         return pdfData as Data
+    }
+    
+    // Add function to update word count and reading time
+    private func updateWordCountAndReadingTime() {
+        let words = text.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+        wordCount = words.count
+        
+        // Average reading speed: 200 words per minute
+        readingTime = max(1, Int(ceil(Double(wordCount) / 200.0)))
     }
 }
 

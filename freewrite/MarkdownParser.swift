@@ -18,9 +18,9 @@ struct MarkdownText: View {
             let matches = regex.matches(in: text, range: range)
             
             for match in matches.reversed() {
-                if let range = Range(match.range(at: 1), in: text) {
-                    let startIndex = attributedString.index(attributedString.startIndex, offsetBy: match.range(at: 0).location)
-                    let endIndex = attributedString.index(startIndex, offsetBy: match.range(at: 0).length)
+                if let range = Range(match.range(at: 0), in: text) {
+                    let startIndex = range.lowerBound
+                    let endIndex = range.upperBound
                     attributedString[startIndex..<endIndex].font = .boldSystemFont(ofSize: 16)
                 }
             }
@@ -47,8 +47,8 @@ struct MarkdownText: View {
             
             for match in matches.reversed() {
                 if let range = Range(match.range(at: 0), in: text) {
-                    let startIndex = attributedString.index(attributedString.startIndex, offsetBy: match.range(at: 0).location)
-                    let endIndex = attributedString.index(startIndex, offsetBy: match.range(at: 0).length)
+                    let startIndex = range.lowerBound
+                    let endIndex = range.upperBound
                     attributedString[startIndex..<endIndex].font = .boldSystemFont(ofSize: 20)
                 }
             }
@@ -70,4 +70,4 @@ struct MarkdownText: View {
         
         return attributedString
     }
-} 
+}
